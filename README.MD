@@ -75,7 +75,7 @@ Server runs on: `http://localhost:3000`
 <img src="screenshots/delete-document.png" width="600">
 
 ### PATCH /api/applications/:id
-<img src="screenshots/patch-application.png" width="600">
+<img src="screenshots/patch-applications.png" width="600">
 
 ## Status
 
