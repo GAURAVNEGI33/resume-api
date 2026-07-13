@@ -1,0 +1,11 @@
+{
+  "users": [],
+  "documents": [],
+  "templates": [
+    { "id": "t1", "name": "Classic", "description": "Clean single column layout" },
+    { "id": "t2", "name": "Modern", "description": "Two column with sidebar" },
+    { "id": "t3", "name": "Minimal", "description": "Simple and clean" }
+  ],
+  "applications": [],
+  "versions": []
+}
