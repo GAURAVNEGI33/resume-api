@@ -65,7 +65,7 @@ Server runs on: `http://localhost:3000`
 
 ## API Testing Screenshots
 
-### POST /api/auth/login
+### POST /api/auth/register
 <img src="screenshots/post-auth-register.png" width="600">
 
 ### GET /api/templates
