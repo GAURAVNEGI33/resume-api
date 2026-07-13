@@ -62,3 +62,21 @@ Server runs on: `http://localhost:3000`
 - POST `/api/applications` — Log application
 - PATCH `/api/applications/:id` — Update status
 - DELETE `/api/applications/:id` — Remove application
+
+## API Testing Screenshots
+
+### POST /api/auth/login
+<img src="screenshots/post-auth-register.png" width="600">
+
+### GET /api/templates
+<img src="screenshots/get-templates.png" width="600">
+
+### DELETE /api/documents/:id
+<img src="screenshots/delete-document.png" width="600">
+
+### PATCH /api/applications/:id
+<img src="screenshots/patch-application.png" width="600">
+
+## Status
+
+All API endpoints have been tested and are working properly with correct JSON responses and status codes.
