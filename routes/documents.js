@@ -1,84 +1,78 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 
-// GET /api/documents
+function readData() {
+  return JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+}
+
+function writeData(data) {
+  fs.writeFileSync('./data.json', JSON.stringify(data, null, 2));
+}
+
 router.get('/', (req, res) => {
-  res.status(200).json([]);
+  const data = readData();
+  res.status(200).json(data.documents);
 });
 
-// POST /api/documents
 router.post('/', (req, res) => {
-  res.status(201).json({ message: 'Document created' });
+  const { title } = req.body;
+  if (!title) return res.status(400).json({ error: 'Title required' });
+  const data = readData();
+  const newDoc = { id: Date.now().toString(), title, content: {}, createdAt: new Date().toISOString() };
+  data.documents.push(newDoc);
+  writeData(data);
+  res.status(201).json({ message: 'Document created', document: newDoc });
 });
 
-// POST /api/documents/import
 router.post('/import', (req, res) => {
   res.status(201).json({ message: 'Document imported' });
 });
 
-// GET /api/documents/:id
 router.get('/:id', (req, res) => {
-  res.status(200).json({ id: req.params.id, title: 'Mock Document' });
+  const data = readData();
+  const doc = data.documents.find(d => d.id === req.params.id);
+  if (!doc) return res.status(404).json({ error: 'Document not found' });
+  res.status(200).json(doc);
 });
 
-// PUT /api/documents/:id
 router.put('/:id', (req, res) => {
-  res.status(200).json({ message: 'Document updated' });
+  const { title } = req.body;
+  const data = readData();
+  const doc = data.documents.find(d => d.id === req.params.id);
+  if (!doc) return res.status(404).json({ error: 'Document not found' });
+  doc.title = title || doc.title;
+  writeData(data);
+  res.status(200).json({ message: 'Document updated', document: doc });
 });
 
-// POST /api/documents/:id/duplicate
 router.post('/:id/duplicate', (req, res) => {
-  res.status(201).json({ message: 'Document duplicated' });
+  const data = readData();
+  const doc = data.documents.find(d => d.id === req.params.id);
+  if (!doc) return res.status(404).json({ error: 'Document not found' });
+  const copy = { ...doc, id: Date.now().toString(), title: doc.title + ' (Copy)' };
+  data.documents.push(copy);
+  writeData(data);
+  res.status(201).json({ message: 'Document duplicated', document: copy });
 });
 
-// DELETE /api/documents/:id
 router.delete('/:id', (req, res) => {
-  res.status(200).json({ message: 'Document deleted' });
+  const data = readData();
+  const index = data.documents.findIndex(d => d.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Document not found' });
+  data.documents.splice(index, 1);
+  writeData(data);
+  res.status(204).send();
 });
 
-// POST /api/documents/:id/sections
-router.post('/:id/sections', (req, res) => {
-  res.status(201).json({ message: 'Section added' });
-});
-
-// PATCH /api/documents/:id/sections/:sectionId
-router.patch('/:id/sections/:sectionId', (req, res) => {
-  res.status(200).json({ message: 'Section updated' });
-});
-
-// DELETE /api/documents/:id/sections/:sectionId
-router.delete('/:id/sections/:sectionId', (req, res) => {
-  res.status(200).json({ message: 'Section removed' });
-});
-
-// POST /api/documents/:id/sections/:sectionId/items
-router.post('/:id/sections/:sectionId/items', (req, res) => {
-  res.status(201).json({ message: 'Item added' });
-});
-
-// PATCH /api/documents/:id/sections/:sectionId/items/:itemId
-router.patch('/:id/sections/:sectionId/items/:itemId', (req, res) => {
-  res.status(200).json({ message: 'Item updated' });
-});
-
-// DELETE /api/documents/:id/sections/:sectionId/items/:itemId
-router.delete('/:id/sections/:sectionId/items/:itemId', (req, res) => {
-  res.status(200).json({ message: 'Item removed' });
-});
-
-// GET /api/documents/:id/versions
-router.get('/:id/versions', (req, res) => {
-  res.status(200).json([]);
-});
-
-// POST /api/documents/:id/versions
-router.post('/:id/versions', (req, res) => {
-  res.status(201).json({ message: 'Version saved' });
-});
-
-// POST /api/documents/:id/versions/:versionId/restore
-router.post('/:id/versions/:versionId/restore', (req, res) => {
-  res.status(200).json({ message: 'Version restored' });
-});
+router.post('/:id/sections', (req, res) => res.status(201).json({ message: 'Section added' }));
+router.patch('/:id/sections/:sectionId', (req, res) => res.status(200).json({ message: 'Section updated' }));
+router.delete('/:id/sections/:sectionId', (req, res) => res.status(204).send());
+router.post('/:id/sections/:sectionId/items', (req, res) => res.status(201).json({ message: 'Item added' }));
+router.patch('/:id/sections/:sectionId/items/:itemId', (req, res) => res.status(200).json({ message: 'Item updated' }));
+router.delete('/:id/sections/:sectionId/items/:itemId', (req, res) => res.status(204).send());
+router.get('/:id/versions', (req, res) => res.status(200).json([]));
+router.post('/:id/versions', (req, res) => res.status(201).json({ message: 'Version saved' }));
+router.post('/:id/versions/:versionId/restore', (req, res) => res.status(200).json({ message: 'Version restored' }));
 
 module.exports = router;

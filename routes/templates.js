@@ -1,18 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 
-// GET /api/templates
+function readData() {
+  return JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+}
+
 router.get('/', (req, res) => {
-  res.status(200).json([
-    { id: 't1', name: 'Classic', description: 'Clean single column layout' },
-    { id: 't2', name: 'Modern', description: 'Two column with sidebar' },
-    { id: 't3', name: 'Minimal', description: 'Simple and clean' }
-  ]);
+  const data = readData();
+  res.status(200).json(data.templates);
 });
 
-// GET /api/templates/:id
 router.get('/:id', (req, res) => {
-  res.status(200).json({ id: req.params.id, name: 'Mock Template' });
+  const data = readData();
+  const template = data.templates.find(t => t.id === req.params.id);
+  if (!template) return res.status(404).json({ error: 'Template not found' });
+  res.status(200).json(template);
 });
 
 module.exports = router;

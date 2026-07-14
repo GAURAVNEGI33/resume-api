@@ -1,25 +1,28 @@
-
 const express = require('express');
 const router = express.Router();
 
-// POST /api/ai/bullets
 router.post('/bullets', (req, res) => {
-  res.status(200).json({ result: 'Mock bullet points (improved)' });
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: 'Text required' });
+  res.status(200).json({ result: text + ' (improved)' });
 });
 
-// POST /api/ai/summary
 router.post('/summary', (req, res) => {
-  res.status(200).json({ result: 'Mock summary (improved)' });
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: 'Text required' });
+  res.status(200).json({ result: text + ' (summarized)' });
 });
 
-// POST /api/ai/rewrite
 router.post('/rewrite', (req, res) => {
-  res.status(200).json({ result: 'Mock rewritten text (improved)' });
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: 'Text required' });
+  res.status(200).json({ result: text + ' (rewritten)' });
 });
 
-// POST /api/ai/prompt
 router.post('/prompt', (req, res) => {
-  res.status(200).json({ result: 'Mock result as per instruction (improved)' });
+  const { text, instruction } = req.body;
+  if (!text || !instruction) return res.status(400).json({ error: 'Text and instruction required' });
+  res.status(200).json({ result: text + ' (modified as per: ' + instruction + ')' });
 });
 
 module.exports = router;
