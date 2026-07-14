@@ -1,28 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const { generateBullets, generateSummary, rewriteText, applyPrompt } = require('../controllers/aiController');
 
-router.post('/bullets', (req, res) => {
-  const { text } = req.body;
-  if (!text) return res.status(400).json({ error: 'Text required' });
-  res.status(200).json({ result: text + ' (improved)' });
-});
-
-router.post('/summary', (req, res) => {
-  const { text } = req.body;
-  if (!text) return res.status(400).json({ error: 'Text required' });
-  res.status(200).json({ result: text + ' (summarized)' });
-});
-
-router.post('/rewrite', (req, res) => {
-  const { text } = req.body;
-  if (!text) return res.status(400).json({ error: 'Text required' });
-  res.status(200).json({ result: text + ' (rewritten)' });
-});
-
-router.post('/prompt', (req, res) => {
-  const { text, instruction } = req.body;
-  if (!text || !instruction) return res.status(400).json({ error: 'Text and instruction required' });
-  res.status(200).json({ result: text + ' (modified as per: ' + instruction + ')' });
-});
+router.post('/bullets', generateBullets);
+router.post('/summary', generateSummary);
+router.post('/rewrite', rewriteText);
+router.post('/prompt', applyPrompt);
 
 module.exports = router;
