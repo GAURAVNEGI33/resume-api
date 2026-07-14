@@ -1,0 +1,36 @@
+{
+  "users": [],
+  "documents": [
+    {
+      "id": "1783999952946",
+      "title": "My Resume",
+      "content": {},
+      "createdAt": "2026-07-14T03:32:32.946Z"
+    },
+    {
+      "id": "1784013864761",
+      "title": "My Resume",
+      "content": {},
+      "createdAt": "2026-07-14T07:24:24.761Z"
+    }
+  ],
+  "templates": [
+    {
+      "id": "t1",
+      "name": "Classic",
+      "description": "Clean single column layout"
+    },
+    {
+      "id": "t2",
+      "name": "Modern",
+      "description": "Two column with sidebar"
+    },
+    {
+      "id": "t3",
+      "name": "Minimal",
+      "description": "Simple and clean"
+    }
+  ],
+  "applications": [],
+  "versions": []
+}
