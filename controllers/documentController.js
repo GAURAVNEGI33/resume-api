@@ -1,10 +1,24 @@
-// Send a simple response
-function hello(req, res) {
-  res.json({
-    message: "Hello from documents",
-  });
-}
+const documentModels = require("../models, /documentModel");
 
-module.exports = {
-  hello,
-};
+/**
+ * Retrieve the list of documents
+ * @param {*} req
+ * @param {*} res
+ */
+
+function list(req, res) {
+  try {
+    const documents = documentModel.findAll();
+    res.send({
+      success: true,
+      message: "Retrieve the list of documents.",
+      documents: documents,
+    });
+  } catch (error) {
+    console.log("error in list", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to retrieve the list of documents.",
+    });
+  }
+}
