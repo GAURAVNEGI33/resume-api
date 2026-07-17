@@ -1,9 +1,9 @@
-const documentModels = require("../models, /documentModel");
+const documentModel = require("../models/documentModel");
 
 /**
  * Retrieve the list of documents
- * @param {*} req
- * @param {*} res
+ *
+ *
  */
 
 function list(req, res) {
@@ -24,9 +24,24 @@ function list(req, res) {
 }
 
 function create(req, res) {
-  res.send({
-    message: "Hello Everyone!",
-  });
+  try {
+    const document = req.body;
+
+    documentModel.create(document);
+
+    res.status(201).send({
+      success: true,
+      message: "Document created.",
+      document,
+    });
+  } catch (error) {
+    console.log("error in create", error);
+
+    res.status(500).send({
+      success: false,
+      message: "Failed to create document.",
+    });
+  }
 }
 
 /**

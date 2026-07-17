@@ -4,7 +4,7 @@ const db = require("./db");
  */
 
 function findAll() {
-  const data = db.read;
+  const data = db.read();
   return data.documents;
 }
 
@@ -14,7 +14,7 @@ function findAll() {
  * @returns
  */
 function findById(id) {
-  const data = db.read;
+  const data = db.read();
   return data.documents.find((document) => document.id === id);
 }
 
@@ -24,8 +24,9 @@ function findById(id) {
  */
 
 function create(documents) {
-  const data = db.read;
+  const data = db.read();
   data.documents.push(documents);
+  db.write(data);
 }
 
 /**
@@ -35,10 +36,10 @@ function create(documents) {
  */
 
 function update(id, documents) {
-  const data = db.read;
+  const data = db.read();
   const index = data.documents.findIndex((doc) => doc.id === id);
   if (index !== -1) {
-    data.documets[index] = documents;
+    data.documents[index] = documents;
     db.write(data);
   }
 }

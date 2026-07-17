@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const controller = require("../controllers/documentController");
+const documentController = require("../controllers/documentController");
+const validate = require("../middleware/documentValidator");
 
 // Test route
 router.get("/", documentController.list);
