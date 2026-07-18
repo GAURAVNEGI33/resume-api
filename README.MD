@@ -131,4 +131,4 @@ This project is focused on understanding backend development concepts such as:
 
 **Gaurav Negi**
 
-Learning Backend Development with Node.js & Express.
+Learning Backend Development with Node.js & Express as a full stack web development intern.
