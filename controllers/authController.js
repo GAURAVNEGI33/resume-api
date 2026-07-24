@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const { User } = require("../models");
 
 /**
  * Register a new user
@@ -68,8 +68,8 @@ async function login(req, res) {
       });
     }
 
-    const bcrypt = require("bcrypt");
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.checkPassword(password);
+
     if (!isMatch) {
       return res.status(401).send({
         success: false,

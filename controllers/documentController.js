@@ -1,8 +1,8 @@
-const documentModel = require("../models/documentModel");
+const { Resume } = require("../models");
 
-function list(req, res) {
+async function list(req, res) {
   try {
-    const documents = documentModel.findAll();
+    const documents = await Resume.findAll();
     res.send({
       success: true,
       message: "Retrieved the list of documents.",
@@ -17,14 +17,14 @@ function list(req, res) {
   }
 }
 
-function create(req, res) {
+async function create(req, res) {
   try {
     const document = req.body;
-    documentModel.create(document);
+    const created = await Resume.create(document);
     res.status(201).send({
       success: true,
       message: "Document created.",
-      document,
+      document: created,
     });
   } catch (error) {
     console.log("error in create", error);
@@ -35,10 +35,10 @@ function create(req, res) {
   }
 }
 
-function findOne(req, res) {
+async function findOne(req, res) {
   try {
     const id = req.params.id;
-    const document = documentModel.findById(id);
+    const document = await Resume.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -59,21 +59,21 @@ function findOne(req, res) {
   }
 }
 
-function update(req, res) {
+async function update(req, res) {
   try {
     const id = req.params.id;
-    const document = documentModel.findById(id);
+    const document = await Resume.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
         message: "Document not found.",
       });
     }
-    documentModel.update(id, req.body);
+    await document.update(req.body);
     res.send({
       success: true,
       message: "Document updated.",
-      document: req.body,
+      document,
     });
   } catch (error) {
     console.log("error in update", error);
@@ -84,17 +84,17 @@ function update(req, res) {
   }
 }
 
-function remove(req, res) {
+async function remove(req, res) {
   try {
     const id = req.params.id;
-    const document = documentModel.findById(id);
+    const document = await Resume.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
         message: "Document not found.",
       });
     }
-    documentModel.remove(id);
+    await document.destroy();
     res.status(204).send();
   } catch (error) {
     console.log("error in remove", error);
@@ -105,10 +105,10 @@ function remove(req, res) {
   }
 }
 
-function duplicate(req, res) {
+async function duplicate(req, res) {
   try {
     const id = req.params.id;
-    const document = documentModel.findById(id);
+    const document = await Resume.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -116,15 +116,14 @@ function duplicate(req, res) {
       });
     }
     const copy = {
-      ...document,
-      id: Date.now().toString(),
       title: document.title + " (Copy)",
+      summary: document.summary,
     };
-    documentModel.create(copy);
+    const createdCopy = await Resume.create(copy);
     res.status(201).send({
       success: true,
       message: "Document duplicated.",
-      document: copy,
+      document: createdCopy,
     });
   } catch (error) {
     console.log("error in duplicate", error);
@@ -135,14 +134,14 @@ function duplicate(req, res) {
   }
 }
 
-function importDocument(req, res) {
+async function importDocument(req, res) {
   try {
     const document = req.body;
-    documentModel.create(document);
+    const created = await Resume.create(document);
     res.status(201).send({
       success: true,
       message: "Document imported.",
-      document,
+      document: created,
     });
   } catch (error) {
     console.log("error in importDocument", error);
