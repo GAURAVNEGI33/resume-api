@@ -1,49 +1,60 @@
-const bcrypt = require("bcrypt");
+'use strict';
+const {
+  Model
+} = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    "User",
-    {
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          min: 8,
-        },
+  class User extends Model {
+    static associate(models) {
+      User.hasMany(models.Resume, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+    }
+
+    checkPassword(plainText) {
+      return bcrypt.compare(plainText, this.password);
+    }
+  }
+
+  User.init({
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
       },
     },
-    {
-      timestamps: true,
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        min: 8,
+      },
     },
-  );
+    tier: {
+      type: DataTypes.ENUM('free', 'pro'),
+      defaultValue: 'free',
+    },
+    aiCredits: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    }
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
 
   User.beforeCreate(async (user) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
   });
-
-  User.prototype.checkPassword = function (plainText) {
-    return bcrypt.compare(plainText, this.password);
-  };
-
-  User.associate = (models) => {
-    User.hasMany(models.Resume, {
-      foreignKey: "userId",
-      onDelete: "CASCADE",
-    });
-  };
 
   return User;
 };
