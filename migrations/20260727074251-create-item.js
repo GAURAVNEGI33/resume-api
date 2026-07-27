@@ -16,7 +16,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       sectionId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: { model: 'Sections', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

@@ -16,7 +16,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       documentId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: { model: 'Documents', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
