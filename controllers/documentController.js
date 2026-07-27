@@ -1,8 +1,8 @@
-const { Resume } = require("../models");
+const { Document } = require("../models");
 
 async function list(req, res) {
   try {
-    const documents = await Resume.findAll();
+    const documents = await Document.findAll();
     res.send({
       success: true,
       message: "Retrieved the list of documents.",
@@ -20,7 +20,7 @@ async function list(req, res) {
 async function create(req, res) {
   try {
     const document = req.body;
-    const created = await Resume.create(document);
+    const created = await Document.create(document);
     res.status(201).send({
       success: true,
       message: "Document created.",
@@ -38,7 +38,7 @@ async function create(req, res) {
 async function findOne(req, res) {
   try {
     const id = req.params.id;
-    const document = await Resume.findByPk(id);
+    const document = await Document.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -62,7 +62,7 @@ async function findOne(req, res) {
 async function update(req, res) {
   try {
     const id = req.params.id;
-    const document = await Resume.findByPk(id);
+    const document = await Document.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -87,7 +87,7 @@ async function update(req, res) {
 async function remove(req, res) {
   try {
     const id = req.params.id;
-    const document = await Resume.findByPk(id);
+    const document = await Document.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -108,7 +108,7 @@ async function remove(req, res) {
 async function duplicate(req, res) {
   try {
     const id = req.params.id;
-    const document = await Resume.findByPk(id);
+    const document = await Document.findByPk(id);
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -117,9 +117,11 @@ async function duplicate(req, res) {
     }
     const copy = {
       title: document.title + " (Copy)",
-      summary: document.summary,
+      type: document.type,
+      userId: document.userId,
+      templateId: document.templateId,
     };
-    const createdCopy = await Resume.create(copy);
+    const createdCopy = await Document.create(copy);
     res.status(201).send({
       success: true,
       message: "Document duplicated.",
@@ -137,7 +139,7 @@ async function duplicate(req, res) {
 async function importDocument(req, res) {
   try {
     const document = req.body;
-    const created = await Resume.create(document);
+    const created = await Document.create(document);
     res.status(201).send({
       success: true,
       message: "Document imported.",
