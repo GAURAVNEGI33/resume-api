@@ -1,13 +1,19 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-const bcrypt = require('bcrypt');
+"use strict";
+const { Model } = require("sequelize");
+const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.hasMany(models.Resume, {
+      User.hasMany(models.Document, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      User.hasMany(models.Application, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      User.hasMany(models.Export, {
         foreignKey: "userId",
         onDelete: "CASCADE",
       });
@@ -18,38 +24,41 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  User.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
+  User.init(
+    {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          min: 8,
+        },
+      },
+      tier: {
+        type: DataTypes.ENUM("free", "pro"),
+        defaultValue: "free",
+      },
+      aiCredits: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        min: 8,
-      },
+    {
+      sequelize,
+      modelName: "User",
     },
-    tier: {
-      type: DataTypes.ENUM('free', 'pro'),
-      defaultValue: 'free',
-    },
-    aiCredits: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    }
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
+  );
 
   User.beforeCreate(async (user) => {
     const salt = await bcrypt.genSalt(10);
