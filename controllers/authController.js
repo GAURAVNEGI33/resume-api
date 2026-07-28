@@ -16,9 +16,9 @@ async function register(req, res) {
       });
     }
 
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.count({ where: { email } });
     if (existingUser) {
-      return res.status(400).send({
+      return res.status(409).send({
         success: false,
         message: "Email already registered.",
       });
@@ -31,8 +31,6 @@ async function register(req, res) {
       message: "User registered successfully.",
       user: {
         id: user.id,
-        name: user.name,
-        email: user.email,
       },
     });
   } catch (error) {
