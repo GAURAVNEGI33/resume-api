@@ -27,9 +27,11 @@ resume-api/
 ```
 
 ### Why do we have `backup/` and `models copy/`?
-As a learning repository, it is valuable to keep a history of how the code evolved. 
-* **`backup/`**: Before integrating a real database like MySQL/PostgreSQL, the API relied on a simple filesystem or hardcoded JSON for CRUD operations. That old logic is stored here to see the "before and after".
-* **`models copy/`**: Before using the powerful `sequelize-cli model:generate` commands, models were likely drafted by hand. Keeping a copy allows us to reference those early drafts and understand exactly how Sequelize expects models to be structured.
+
+As a learning repository, it is valuable to keep a history of how the code evolved.
+
+- **`backup/`**: Before integrating a real database like MySQL/PostgreSQL, the API relied on a simple filesystem or hardcoded JSON for CRUD operations. That old logic is stored here to see the "before and after".
+- **`models copy/`**: Before using the powerful `sequelize-cli model:generate` commands, models were likely drafted by hand. Keeping a copy allows us to reference those early drafts and understand exactly how Sequelize expects models to be structured.
 
 ---
 
@@ -64,6 +66,15 @@ As a learning repository, it is valuable to keep a history of how the code evolv
 
 ---
 
+## 📖 API Documentation
+
+The complete API documentation, including request bodies and example responses, is published via Postman. 
+**Note:** Currently, only the **Authentication** and **Document** APIs have been created. The remaining APIs for Sections, Templates, Items, Versions, and Applications will be built soon!
+
+👉 [View the Postman API Documentation here](https://documenter.getpostman.com/view/56589029/2sBY4SMJa5)
+
+---
+
 ## 📌 Current Progress
 
 - ✅ Project initialized & Express server setup
@@ -94,7 +105,9 @@ npm install
 ```
 
 ### Setup Database
+
 Ensure your database is running, verify credentials in `config/config.js`, and run migrations:
+
 ```bash
 npx sequelize-cli db:migrate
 ```
@@ -110,6 +123,7 @@ node app.js
 ## 📖 Learning Notes
 
 This project is focused on understanding backend development concepts such as:
+
 - **Express Application Lifecycle** (Request & Response)
 - **Database Migrations** (Creating and rolling back tables with `sequelize-cli`)
 - **Model Relationships** (Foreign Keys, Cascading deletes to prevent orphaned data)
