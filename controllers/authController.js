@@ -32,6 +32,7 @@ async function register(req, res) {
       user: {
         id: user.id,
       },
+      token: "mock-token-" + user.id,
     });
   } catch (error) {
     console.log("error in register", error);
