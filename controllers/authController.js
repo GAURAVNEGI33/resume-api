@@ -1,4 +1,20 @@
 const { User } = require("../models");
+const jwt = require("jsonwebtoken");
+
+// Helper to generate the JWT token and profile object
+function generateAuthData(user) {
+  const profile = {
+    id: user.id,
+    email: user.email,
+    name: user.name
+  };
+
+  const token = jwt.sign(profile, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  return { token, user: profile };
+}
 
 /**
  * Register a new user
@@ -25,14 +41,13 @@ async function register(req, res) {
     }
 
     const user = await User.create({ name, email, password });
+    
+    const authData = generateAuthData(user);
 
-    res.status(201).send({
+    return res.status(201).json({
       success: true,
       message: "User registered successfully.",
-      user: {
-        id: user.id,
-      },
-      token: "mock-token-" + user.id,
+      data: authData
     });
   } catch (error) {
     console.log("error in register", error);
@@ -76,10 +91,12 @@ async function login(req, res) {
       });
     }
 
-    res.status(200).send({
+    const authData = generateAuthData(user);
+
+    return res.status(200).json({
       success: true,
-      message: "Login successful.",
-      token: "mock-token-" + user.id,
+      message: "User logged in successfully",
+      data: authData
     });
   } catch (error) {
     console.log("error in login", error);
