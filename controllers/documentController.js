@@ -2,7 +2,7 @@ const { Document } = require("../models");
 
 async function list(req, res) {
   try {
-    const documents = await Document.findAll();
+    const documents = await Document.findAll({ where: { userId: req.user.id } });
     res.send({
       success: true,
       message: "Retrieved the list of documents.",
@@ -20,6 +20,8 @@ async function list(req, res) {
 async function create(req, res) {
   try {
     const document = req.body;
+    // Force the document to belong to the logged-in user
+    document.userId = req.user.id;
     const created = await Document.create(document);
     res.status(201).send({
       success: true,
@@ -38,7 +40,7 @@ async function create(req, res) {
 async function findOne(req, res) {
   try {
     const id = req.params.id;
-    const document = await Document.findByPk(id);
+    const document = await Document.findOne({ where: { id: id, userId: req.user.id } });
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -62,7 +64,7 @@ async function findOne(req, res) {
 async function update(req, res) {
   try {
     const id = req.params.id;
-    const document = await Document.findByPk(id);
+    const document = await Document.findOne({ where: { id: id, userId: req.user.id } });
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -87,7 +89,7 @@ async function update(req, res) {
 async function remove(req, res) {
   try {
     const id = req.params.id;
-    const document = await Document.findByPk(id);
+    const document = await Document.findOne({ where: { id: id, userId: req.user.id } });
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -108,7 +110,7 @@ async function remove(req, res) {
 async function duplicate(req, res) {
   try {
     const id = req.params.id;
-    const document = await Document.findByPk(id);
+    const document = await Document.findOne({ where: { id: id, userId: req.user.id } });
     if (!document) {
       return res.status(404).send({
         success: false,
@@ -118,7 +120,7 @@ async function duplicate(req, res) {
     const copy = {
       title: document.title + " (Copy)",
       type: document.type,
-      userId: document.userId,
+      userId: req.user.id,
       templateId: document.templateId,
     };
     const createdCopy = await Document.create(copy);
