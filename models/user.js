@@ -53,6 +53,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
+      resetOtp: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      otpExpiry: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
@@ -63,6 +71,13 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeCreate(async (user) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
+  });
+
+  User.beforeUpdate(async (user) => {
+    if (user.changed("password")) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+    }
   });
 
   return User;
