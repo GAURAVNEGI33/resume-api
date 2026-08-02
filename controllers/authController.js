@@ -1,5 +1,6 @@
 const { User } = require("../models");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
 
 // Helper to generate the JWT token and profile object
 function generateAuthData(user) {
@@ -132,7 +133,7 @@ function logout(req, res) {
  * @param {*} req
  * @param {*} res
  */
-function forgotPassword(req, res) {
+async function forgotPassword(req, res) {
   try {
     const { email } = req.body;
     if (!email) {
@@ -141,15 +142,44 @@ function forgotPassword(req, res) {
         message: "Email is required.",
       });
     }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Set expiry to 15 minutes from now
+    const expiry = new Date();
+    expiry.setMinutes(expiry.getMinutes() + 15);
+
+    // Save to user
+    user.resetOtp = otp;
+    user.otpExpiry = expiry;
+    await user.save();
+    
+    // Send email with OTP
+    const message = `Your password reset OTP is: ${otp}\nThis OTP is valid for 15 minutes.`;
+    await sendEmail({
+      to: user.email,
+      subject: "Password Reset OTP",
+      text: message,
+    });
+
     res.status(200).send({
       success: true,
-      message: "Password reset link sent to " + email,
+      message: "An OTP has been sent to your email.",
     });
   } catch (error) {
     console.log("error in forgotPassword", error);
     res.status(500).send({
       success: false,
-      message: "Failed to send reset link.",
+      message: "Failed to generate OTP.",
     });
   }
 }
@@ -159,8 +189,50 @@ function forgotPassword(req, res) {
  * @param {*} req
  * @param {*} res
  */
-function resetPassword(req, res) {
+async function resetPassword(req, res) {
   try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).send({
+        success: false,
+        message: "Email, OTP and new password are required.",
+      });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Check if OTP matches
+    if (user.resetOtp !== otp.toString()) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    // Check if OTP is expired
+    if (new Date() > new Date(user.otpExpiry)) {
+      return res.status(400).send({
+        success: false,
+        message: "OTP has expired.",
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    
+    // Clear OTP fields
+    user.resetOtp = null;
+    user.otpExpiry = null;
+    
+    await user.save();
+
     res.status(200).send({
       success: true,
       message: "Password reset successful.",
